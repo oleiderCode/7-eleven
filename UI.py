@@ -16,7 +16,8 @@ class App(tk.CTk):
         self.resizable(False, False)
 
 
-        self.sections_count = 1  # Contador de secciones añadidas
+        self.sections_count = 0  # Contador de secciones añadidas
+        self.sections = []  # 🔹 Lista para almacenar las secciones
 
         # **Contenedor principal (para los frames)**
         self.main_frame = tk.CTkFrame(self)
@@ -73,13 +74,11 @@ class App(tk.CTk):
         number_picker = NumberPicker(frame2)
         number_picker.grid(row=0, column=1, pady=5, padx=10)
 
-        return section_container  # Retornamos el contenedor en lugar de los frames individuales
+        # 🔹 Guardamos la referencia de la sección
+        self.sections.append({"entrada": date_entry, "salida": date_outpost, "tickets": number_picker})
+        return section_container
 
 
-    # def add_section(self):
-    #     """Añade una nueva sección al presionar el botón."""
-    #     self.sections_count += 1
-    #     self.create_section()
 
     def show_date_picker(self, event, entry_widget):
         """Muestra el selector de fecha y hora debajo del input correspondiente."""
@@ -90,6 +89,7 @@ class App(tk.CTk):
         self.date_picker.lift()
 
     def save_pdf_dialog(self):
+        data = self.get_date_picker()
         """Abre un cuadro de diálogo para seleccionar dónde guardar el PDF."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
@@ -99,10 +99,40 @@ class App(tk.CTk):
 
         if file_path:
             pdf_gen = PDFGenerator(file_path)  # ✅ Crear instancia de PDFGenerator
-            fechas = pdf_gen.generate_dates()  # ✅ Generar fechas
+            fechas = pdf_gen.generate_dates(data)  # ✅ Generar fechas
             pdf_gen.create_pdf(fechas)  # ✅ Crear PDF
-            print(f"📄 PDF guardado en: {file_path}")
+            print(f"📄 PDF guardado en: {file_path}, con las fechas {fechas}")
 
+    def get_date_picker(self):
+        """Obtiene y muestra los datos ingresados en cada sección.
+        📅 Ejemplo de fechas
+        dates = {
+            1: {"Entrada: 2025-03-25 00:00", "Salida: 2025-03-25 00:00", tickets: 1},
+            2: {"Entrada: 2025-03-25 00:00", "Salida: 2025-03-25 00:00", tickets: 1},
+        }
+        """
+        dates = {}
+        for i, section in enumerate(self.sections):
+            entrada = section["entrada"].get().strip() or ""  # Evita valores None
+            salida = section["salida"].get().strip() or ""
+            tickets = section["tickets"].value if hasattr(section["tickets"], "value") else 0  # Asegura que haya un valor
+            dates[i] = (entrada, salida, tickets)
+        print(dates)
+
+        return dates
+
+        # for i, section in enumerate(self.sections):
+        #     entrada = section["entrada"].get()
+        #     salida = section["salida"].get()
+        #     tickets = section["tickets"].value  # Obtener el valor del NumberPicker
+
+        #     print(f"Sección {i+1}:")
+        #     print(f"  - Entrada: {entrada}")
+        #     print(f"  - Salida: {salida}")
+        #     print(f"  - Tickets: {tickets}")
+        #     print("-------------")
+    
+    
 # Ejecutar la aplicación
 app = App()
 app.mainloop()
