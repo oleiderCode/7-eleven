@@ -1,6 +1,8 @@
 import customtkinter as tk
 from datetime_picker import DateTimePicker  # ⬅️ Importa el módulo
 from number_picker import NumberPicker
+from tkinter import filedialog
+from dates import generate_pdf
 
 tk.set_appearance_mode("dark")  # "dark", "light" o "system"
 
@@ -9,9 +11,11 @@ class App(tk.CTk):
     def __init__(self):
         super().__init__()
 
+        self.generate_pdf = generate_pdf
+
         self.title("o7")
         self.geometry("650x400")  # Aumentar tamaño para más secciones
-        self.resizable(True, True)
+        self.resizable(False, False)
 
 
         self.sections_count = 1  # Contador de secciones añadidas
@@ -29,7 +33,7 @@ class App(tk.CTk):
         self.create_section()
 
         # Botón de Confirmar
-        self.confirm_button = tk.CTkButton(self, text="Confirmar", command=lambda: print("Datos confirmados"))
+        self.confirm_button = tk.CTkButton(self, text="Confirmar", command=self.save_file_dialog)
         self.confirm_button.pack(pady=10)
 
 
@@ -82,8 +86,24 @@ class App(tk.CTk):
     def show_date_picker(self, event, entry_widget):
         """Muestra el selector de fecha y hora debajo del input correspondiente."""
         self.date_picker = DateTimePicker(self, entry_widget)
-        self.date_picker.place(x=entry_widget.winfo_x(), y=entry_widget.winfo_y() + 30)
+        #widget en el centro del frame principal (self)
+        self.date_picker.place(x=self.winfo_width() / 2, y=self.winfo_height() / 2, anchor="center")
+        # self.date_picker.place(anchor="center")
         self.date_picker.lift()
+
+    def save_file_dialog(self):
+        print("Guardando archivo...")
+        """Abre un cuadro de diálogo para seleccionar dónde guardar el archivo."""
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".txt",  # Extensión predeterminada
+            filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")],  # Tipos de archivo permitidos
+            title="Guardar como"
+        )
+
+        if file_path:  # Si el usuario no cancela la selección
+            fechas = self.generate_dates()  # Obtener fechas
+            generate_pdf(file_path, fechas)
+            print(f"PDF guardado en: {file_path}")
 
 # Ejecutar la aplicación
 app = App()

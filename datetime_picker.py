@@ -38,6 +38,10 @@ class DateTimePicker(tk.CTkFrame):
         self.confirm_button = tk.CTkButton(self, text="Confirm", command=self.set_date)
         self.confirm_button.pack(pady=5)
 
+        # 🔹 Botón de cancelar
+        self.cancel_button = tk.CTkButton(self, text="Cancel", command=self.place_forget)
+        self.cancel_button.pack(pady=5)
+
     def set_date(self):
         """Obtiene la fecha y hora seleccionadas y las coloca en el input."""
         selected_date = self.calendar.get_date()
