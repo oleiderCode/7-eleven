@@ -2,7 +2,7 @@ import customtkinter as tk
 from datetime_picker import DateTimePicker  # ⬅️ Importa el módulo
 from number_picker import NumberPicker
 from tkinter import filedialog
-from dates import generate_pdf
+from pdf_generator import PDFGenerator
 
 tk.set_appearance_mode("dark")  # "dark", "light" o "system"
 
@@ -10,8 +10,6 @@ tk.set_appearance_mode("dark")  # "dark", "light" o "system"
 class App(tk.CTk):
     def __init__(self):
         super().__init__()
-
-        self.generate_pdf = generate_pdf
 
         self.title("o7")
         self.geometry("650x400")  # Aumentar tamaño para más secciones
@@ -33,7 +31,7 @@ class App(tk.CTk):
         self.create_section()
 
         # Botón de Confirmar
-        self.confirm_button = tk.CTkButton(self, text="Confirmar", command=self.save_file_dialog)
+        self.confirm_button = tk.CTkButton(self, text="Confirmar", command=self.save_pdf_dialog)
         self.confirm_button.pack(pady=10)
 
 
@@ -91,19 +89,19 @@ class App(tk.CTk):
         # self.date_picker.place(anchor="center")
         self.date_picker.lift()
 
-    def save_file_dialog(self):
-        print("Guardando archivo...")
-        """Abre un cuadro de diálogo para seleccionar dónde guardar el archivo."""
+    def save_pdf_dialog(self):
+        """Abre un cuadro de diálogo para seleccionar dónde guardar el PDF."""
         file_path = filedialog.asksaveasfilename(
-            defaultextension=".txt",  # Extensión predeterminada
-            filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")],  # Tipos de archivo permitidos
+            defaultextension=".pdf",
+            filetypes=[("PDF Files", "*.pdf")],
             title="Guardar como"
         )
 
-        if file_path:  # Si el usuario no cancela la selección
-            fechas = self.generate_dates()  # Obtener fechas
-            generate_pdf(file_path, fechas)
-            print(f"PDF guardado en: {file_path}")
+        if file_path:
+            pdf_gen = PDFGenerator(file_path)  # ✅ Crear instancia de PDFGenerator
+            fechas = pdf_gen.generate_dates()  # ✅ Generar fechas
+            pdf_gen.create_pdf(fechas)  # ✅ Crear PDF
+            print(f"📄 PDF guardado en: {file_path}")
 
 # Ejecutar la aplicación
 app = App()
