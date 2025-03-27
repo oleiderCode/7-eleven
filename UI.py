@@ -11,7 +11,7 @@ class App(tk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("o7")
+        self.title("tickets Giovanny")
         self.geometry("650x400")  # Aumentar tamaño para más secciones
         self.resizable(False, False)
 

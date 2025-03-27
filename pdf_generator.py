@@ -9,10 +9,11 @@ class PDFGenerator:
         self.filename = filename
         self.cols = 8
         self.rows = 8
-        self.cell_width = (5.2 / 2) * cm
-        self.cell_height = 3.2 * cm
+        self.cell_width = (5.35 / 2) * cm
+        self.cell_height = 3.1 * cm
         self.margin_left = 0.1 * cm
         self.margin_top = 1.2 * cm
+        self.margin_bottom = 1.85 * cm
         self.page_width, self.page_height = letter
 
     def generate_dates(self, dates):
@@ -58,10 +59,18 @@ class PDFGenerator:
         start_x = self.margin_left
         start_y = self.page_height - self.margin_top
 
-        for row in range(self.rows):
+        available_height = self.page_height - self.margin_top - self.margin_bottom
+        max_rows = int(available_height // self.cell_height)
+                       
+
+        for row in range(max_rows):
             for col in range(self.cols):
                 x = start_x + col * self.cell_width
                 y = start_y - row * self.cell_height
+
+                # Si llegamos al margen inferior, salimos del bucle
+                if y - self.cell_height < self.margin_bottom:
+                    break
 
                 c.rect(x, y - self.cell_height, self.cell_width, self.cell_height)  # Dibujar celda
                 c.setFont("Helvetica", 7)
@@ -83,15 +92,23 @@ class PDFGenerator:
                         except ValueError:
                             pass  
 
-                    texto_entrada = f"Entrada: {entrada.strftime('%d/%m/%Y')}" if isinstance(entrada, datetime) else f"Entrada: {entrada}"
-                    texto_salida = f"Salida: {salida.strftime('%d/%m/%Y')}" if isinstance(salida, datetime) else f"Salida: {salida}"
+                    # texto_entrada = f"Entrada: {entrada.strftime('%d/%m/%Y')}" if isinstance(entrada, datetime) else f"Entrada: {entrada}"
+                    texto_entrada_1 = "Entrada:"
+                    texto_entrada_2 = entrada.strftime('%d/%m/%Y %H:%M') if isinstance(entrada, datetime) else entrada
+
+                    texto_salida_1 = "Salida:"
+                    texto_salida_2 = salida.strftime('%d/%m/%Y %H:%M') if isinstance(salida, datetime) else salida
+
+                    # texto_salida = f"Salida: {salida.strftime('%d/%m/%Y')}" if isinstance(salida, datetime) else f"Salida: {salida}"
 
                     c.saveState()
                     c.translate(x + self.cell_width / 2, y - self.cell_height / 2)
                     c.rotate(90)
 
-                    c.drawCentredString(0, 10, texto_entrada)
-                    c.drawCentredString(0, -10, texto_salida)
+                    c.drawCentredString(0, 20, texto_entrada_1)  # Entrada:
+                    c.drawCentredString(0, 5, texto_entrada_2)   # Fecha y hora de entrada
+                    c.drawCentredString(0, -10, texto_salida_1)  # Salida:
+                    c.drawCentredString(0, -25, texto_salida_2)  # Fecha y hora de salida
 
                     c.restoreState()
 
