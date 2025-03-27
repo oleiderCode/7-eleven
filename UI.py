@@ -1,6 +1,7 @@
 import customtkinter as tk
 from datetime_picker import DateTimePicker  # ⬅️ Importa el módulo
 from number_picker import NumberPicker
+from PIL import Image, ImageTk
 from tkinter import filedialog
 from pdf_generator import PDFGenerator
 
@@ -13,8 +14,7 @@ class App(tk.CTk):
 
         self.title("tickets Giovanny")
         self.geometry("650x400")  # Aumentar tamaño para más secciones
-        self.resizable(False, False)
-
+        self.resizable(True, False)
 
         self.sections_count = 0  # Contador de secciones añadidas
         self.sections = []  # 🔹 Lista para almacenar las secciones
@@ -78,15 +78,29 @@ class App(tk.CTk):
         self.sections.append({"entrada": date_entry, "salida": date_outpost, "tickets": number_picker})
         return section_container
 
-
-
     def show_date_picker(self, event, entry_widget):
-        """Muestra el selector de fecha y hora debajo del input correspondiente."""
+        """Muestra el selector de fecha y hora en el centro de la ventana principal."""
+        self.after(100, self._show_date_picker, entry_widget)
+
+    def _show_date_picker(self, entry_widget, margin_x=20, margin_y=20):
+        """Coloca el selector de fecha en el centro con márgenes."""
         self.date_picker = DateTimePicker(self, entry_widget)
-        #widget en el centro del frame principal (self)
-        self.date_picker.place(x=self.winfo_width() / 2, y=self.winfo_height() / 2, anchor="center")
-        # self.date_picker.place(anchor="center")
+
+        width = self.winfo_width()
+        height = self.winfo_height()
+
+        # Asegurar que la ventana tiene un tamaño válido
+        if width == 1 or height == 1:
+            width = self.winfo_reqwidth()
+            height = self.winfo_reqheight()
+
+        # Ajustar posición con márgenes
+        x = (width / 2) + margin_x
+        y = (height / 2) + margin_y
+
+        self.date_picker.place(x=x, y=y, anchor="center")
         self.date_picker.lift()
+
 
     def save_pdf_dialog(self):
         data = self.get_date_picker()
@@ -135,4 +149,6 @@ class App(tk.CTk):
     
 # Ejecutar la aplicación
 app = App()
+app.iconbitmap("hand.ico") 
+
 app.mainloop()
