@@ -94,9 +94,10 @@ class App(tk.CTk):
             width = self.winfo_reqwidth()
             height = self.winfo_reqheight()
 
+        print(width)
         # Ajustar posición con márgenes
-        x = (width / 2) + margin_x
-        y = (height / 2) + margin_y
+        x = (650 / 2) 
+        y = (400 / 2) + margin_y
 
         self.date_picker.place(x=x, y=y, anchor="center")
         self.date_picker.lift()
