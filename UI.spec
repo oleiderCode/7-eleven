@@ -5,7 +5,7 @@ a = Analysis(
     ['UI.py'],
     pathex=[],
     binaries=[],
-    datas=[('hand.ico', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
