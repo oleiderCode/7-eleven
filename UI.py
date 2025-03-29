@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 from pdf_generator import PDFGenerator
 
+from userTest import make_registry_key
+
 tk.set_appearance_mode("dark")  # "dark", "light" o "system"
 
 
@@ -18,6 +20,10 @@ class App(tk.CTk):
 
         self.sections_count = 0  # Contador de secciones añadidas
         self.sections = []  # 🔹 Lista para almacenar las secciones
+        self.user_test = make_registry_key()  
+        print(self.user_test)
+
+
 
         # **Contenedor principal (para los frames)**
         self.main_frame = tk.CTkFrame(self)
@@ -32,10 +38,16 @@ class App(tk.CTk):
         self.create_section()
 
         # Botón de Confirmar
+        # self.confirm_button = tk.CTkButton(self, text="Confirmar", command=self.save_pdf_dialog)
         self.confirm_button = tk.CTkButton(self, text="Confirmar", command=self.save_pdf_dialog)
         self.confirm_button.pack(pady=10)
 
-
+        if self.user_test["limite"]:
+            print("Límite alcanzado")
+            self.confirm_button.configure(state="disabled")
+        else:
+            print("Límite no alcanzado")
+            self.confirm_button.configure(state="normal")
 
     def create_section(self):
         if self.sections_count > 2:
